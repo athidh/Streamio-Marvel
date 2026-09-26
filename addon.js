@@ -165,9 +165,19 @@ const catalogFetchers = {
         const cached = getCached("other_marvel");
         if (cached) return cached;
         try {
-            const allMarvel = await fetchAllPages(`/discover/movie?with_companies=${MARVEL_ENTERTAINMENT}&sort_by=release_date.asc`);
+            const otherCollections = [558216, 556, 125574, 573436, 735, 9744, 90306];
+            let collectionMovies = [];
+            for (const id of otherCollections) {
+                try {
+                    collectionMovies = collectionMovies.concat(await fetchCollection(id));
+                } catch (e) {}
+            }
+            const discoverMovies = await fetchAllPages(`/discover/movie?with_companies=${MARVEL_ENTERTAINMENT}&sort_by=release_date.asc`);
+            let all = collectionMovies.concat(discoverMovies);
             const mcuMovies = await fetchAllPages(`/discover/movie?with_companies=${MARVEL_STUDIOS}&sort_by=release_date.asc`);
             const mcuIds = new Set(mcuMovies.map(m => m.id));
+            const avengers = await fetchCollection(AVENGERS_COLLECTION);
+            avengers.forEach(m => mcuIds.add(m.id));
             const xmenIds = new Set();
             for (const id of XMEN_COLLECTIONS) {
                 try {
@@ -175,7 +185,7 @@ const catalogFetchers = {
                     movies.forEach(m => xmenIds.add(m.id));
                 } catch (e) {}
             }
-            const result = sortMovies(allMarvel.filter(m => !mcuIds.has(m.id) && !xmenIds.has(m.id))).map(fmtMovie);
+            const result = sortMovies(dedupe(all).filter(m => !mcuIds.has(m.id) && !xmenIds.has(m.id))).map(fmtMovie);
             setCache("other_marvel", result);
             return result;
         } catch (e) {
