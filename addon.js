@@ -94,6 +94,8 @@ function sortSeries(arr) {
 
 const AVENGERS_COLLECTION = 86311;
 const XMEN_COLLECTIONS = [748, 453993, 448150];
+const OTHER_COLLECTIONS = [558216, 556, 125574, 573436, 735, 9744, 90306, 635362, 728947];
+const STANDALONE_MARVEL_IDS = [526896, 634492, 539972, 9947, 9480, 1927, 36647, 1250, 340102];
 const MARVEL_STUDIOS = 420;
 const MARVEL_ENTERTAINMENT = 7505;
 
@@ -151,8 +153,16 @@ const catalogFetchers = {
         const cached = getCached("marvel_series");
         if (cached) return cached;
         try {
-            const shows = await fetchAllPages(`/discover/tv?with_companies=${MARVEL_STUDIOS}&sort_by=first_air_date.asc`);
-            const result = sortSeries(shows).map(fmtSeries);
+            const studioShows = await fetchAllPages(`/discover/tv?with_companies=${MARVEL_STUDIOS}&sort_by=first_air_date.asc`);
+            const entShows = await fetchAllPages(`/discover/tv?with_companies=${MARVEL_ENTERTAINMENT}&sort_by=first_air_date.asc`);
+            const combined = studioShows.concat(entShows);
+            const seen = new Set();
+            const unique = combined.filter(s => {
+                if (seen.has(s.id)) return false;
+                seen.add(s.id);
+                return true;
+            });
+            const result = sortSeries(unique).map(fmtSeries);
             setCache("marvel_series", result);
             return result;
         } catch (e) {
@@ -165,15 +175,21 @@ const catalogFetchers = {
         const cached = getCached("other_marvel");
         if (cached) return cached;
         try {
-            const otherCollections = [558216, 556, 125574, 573436, 735, 9744, 90306];
             let collectionMovies = [];
-            for (const id of otherCollections) {
+            for (const id of OTHER_COLLECTIONS) {
                 try {
                     collectionMovies = collectionMovies.concat(await fetchCollection(id));
                 } catch (e) {}
             }
+            let standaloneMovies = [];
+            for (const id of STANDALONE_MARVEL_IDS) {
+                try {
+                    const data = await tmdbGet(`/movie/${id}`);
+                    if (data && data.id) standaloneMovies.push(data);
+                } catch (e) {}
+            }
             const discoverMovies = await fetchAllPages(`/discover/movie?with_companies=${MARVEL_ENTERTAINMENT}&sort_by=release_date.asc`);
-            let all = collectionMovies.concat(discoverMovies);
+            let all = collectionMovies.concat(standaloneMovies).concat(discoverMovies);
             const mcuMovies = await fetchAllPages(`/discover/movie?with_companies=${MARVEL_STUDIOS}&sort_by=release_date.asc`);
             const mcuIds = new Set(mcuMovies.map(m => m.id));
             const avengers = await fetchCollection(AVENGERS_COLLECTION);
