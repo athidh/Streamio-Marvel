@@ -1,15 +1,20 @@
-# MCU Chronological Order — Stremio Addon
+# Marvel Universe — Stremio Addon
 
-A Stremio addon that provides a catalog of Marvel Cinematic Universe movies sorted in chronological timeline order, powered by the TMDB API.
+A Stremio addon that provides catalogs of all Marvel movies and series, organized by franchise and sorted by release date. Powered by the TMDB API.
 
 ![Marvel](https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/MarvelLogo.svg/400px-MarvelLogo.svg.png)
 
-## Features
+## Catalogs
 
-- Automatically fetches the latest MCU movie list from TMDB
-- Movies sorted in release chronological order
-- One-click install page for Stremio
-- Ready for cloud deployment (Render, Railway, etc.)
+| Catalog | Type | Source |
+|---|---|---|
+| **Avengers** | Movies | TMDB Avengers Collection |
+| **X-Men Universe** | Movies | X-Men, Wolverine & Deadpool Collections |
+| **MCU Movies** | Movies | All Marvel Studios films (excluding Avengers) |
+| **Marvel Series** | Series | All Marvel Studios TV shows |
+| **Other Marvel** | Movies | Non-MCU Marvel films (Sony, Fox, etc.) |
+
+All catalogs are sorted by release date and auto-update from TMDB with a 1-hour cache.
 
 ## Prerequisites
 
@@ -22,7 +27,7 @@ A Stremio addon that provides a catalog of Marvel Cinematic Universe movies sort
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/YOUR_USERNAME/Streamio-Marvel.git
+   git clone https://github.com/athidh/Streamio-Marvel.git
    cd Streamio-Marvel
    ```
 
@@ -40,7 +45,7 @@ A Stremio addon that provides a catalog of Marvel Cinematic Universe movies sort
    cp .env.example .env
    ```
 
-   Open `.env` and replace `your_tmdb_api_key_here` with your actual key:
+   Open `.env` and replace the placeholder with your actual key:
 
    ```
    TMDB_API_KEY=your_actual_api_key
@@ -56,7 +61,7 @@ A Stremio addon that provides a catalog of Marvel Cinematic Universe movies sort
 
 5. **Install in Stremio**
 
-   Open `http://localhost:7000` in your browser and click **Install Addon in Stremio**, or paste the manifest URL into Stremio's addon search bar:
+   Open `http://localhost:7000` in your browser and click **Install in Stremio**, or paste the manifest URL into Stremio's addon search bar:
 
    ```
    http://localhost:7000/manifest.json
@@ -85,7 +90,6 @@ A Stremio addon that provides a catalog of Marvel Cinematic Universe movies sort
    | `TMDB_API_KEY` | your actual TMDB API key |
 
    > `PORT` is set automatically by Render — no need to add it.
-   > `TMDB_MCU_COLLECTION_ID` defaults to `86311` if not set.
 
 6. Click **Deploy** and wait for the build to finish
 
@@ -100,7 +104,6 @@ A Stremio addon that provides a catalog of Marvel Cinematic Universe movies sort
 | Variable | Required | Default | Description |
 |---|---|---|---|
 | `TMDB_API_KEY` | Yes | — | Your TMDB API key |
-| `TMDB_MCU_COLLECTION_ID` | No | `86311` | TMDB collection ID for MCU movies |
 | `PORT` | No | `7000` | Port the server runs on |
 
 ## Project Structure

@@ -1,7 +1,7 @@
 {
   "name": "mcu-chronological-addon",
-  "version": "1.0.0",
-  "description": "Stremio addon for MCU movies in chronological order",
+  "version": "2.0.0",
+  "description": "Stremio addon for all Marvel movies and series — Avengers, X-Men, MCU, and more",
   "main": "addon.js",
   "scripts": {
     "start": "node addon.js"
